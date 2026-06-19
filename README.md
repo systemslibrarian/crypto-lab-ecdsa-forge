@@ -31,6 +31,13 @@ ECDSA is standardized in NIST FIPS 186-5 and SEC 2. It underpins TLS 1.2/1.3 cer
   - `npx tsx test/phase1-check.ts`
   - `npx tsx test/phase2-check.ts`
   - `npx tsx test/rfc6979.test.ts`
+  - `npx tsx test/toycurve.test.ts`
+
+## Teaching Features
+- **Curve geometry, visualized** — point addition over the reals (chord-and-tangent, plus doubling) and the same group as a finite field of points, with the `k·G` walk that makes the discrete-log gap tangible.
+- **Transparent nonce-reuse attack** — the two-equations / two-unknowns derivation, an interactive toy curve (`y² = x³ + 2x + 2 mod 17`, prime order 19) where every value is a hand-checkable small integer, and the same attack run live on real 256-bit keys with full values and an explicit recovered-equals-victim proof.
+- **Glossary & primary sources** — every term defined, every claim cited to FIPS 186-5, SEC 1/2, RFC 6979, and the PS3 disclosure.
+- **Accessible & responsive** — skip link, ARIA landmarks/live regions, keyboard-navigable, light/dark theme, reduced-motion support, and a mobile layout down to small screens.
 
 ## License
 Educational demo repository.

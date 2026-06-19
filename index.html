@@ -3,14 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Interactive ECDSA lab: generate keys on secp256k1 and P-256, watch a real nonce-reuse private-key recovery attack, and compare RFC 6979 deterministic nonces."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f7fc" media="(prefers-color-scheme: light)" />
     <script>
-      const saved = localStorage.getItem('theme');
-      document.documentElement.setAttribute('data-theme', saved ?? 'dark');
+      // Apply saved (or system) theme before paint to avoid a flash.
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          var system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', saved || system);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
     </script>
-    <title>crypto-lab-ecdsa-forge</title>
+    <title>ECDSA Forge — Nonce Reuse &amp; RFC 6979 Lab</title>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
