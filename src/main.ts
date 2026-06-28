@@ -505,6 +505,13 @@ Back-substitute:
     </section>
 
     <footer class="page-footer">
+      <p>Related demos:
+        <a href="https://systemslibrarian.github.io/crypto-lab-ed25519-forge/" target="_blank" rel="noopener noreferrer">crypto-lab-ed25519-forge</a> ·
+        <a href="https://systemslibrarian.github.io/crypto-lab-nonce-lattice/" target="_blank" rel="noopener noreferrer">crypto-lab-nonce-lattice</a> ·
+        <a href="https://systemslibrarian.github.io/crypto-lab-rsa-forge/" target="_blank" rel="noopener noreferrer">crypto-lab-rsa-forge</a> ·
+        <a href="https://systemslibrarian.github.io/crypto-lab-bitcoin-wallet/" target="_blank" rel="noopener noreferrer">crypto-lab-bitcoin-wallet</a> ·
+        <a href="https://systemslibrarian.github.io/crypto-lab-jwt-forge/" target="_blank" rel="noopener noreferrer">crypto-lab-jwt-forge</a>
+      </p>
       <p>Educational ECDSA lab — not for production signing. Curve arithmetic by <span class="mono">@noble/curves</span>; ECDSA, the attack, RFC 6979, and the toy curve are implemented from scratch in this repo.</p>
     </footer>
   </main>
