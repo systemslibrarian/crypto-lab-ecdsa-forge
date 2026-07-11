@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Playwright
+/test-results/
+/playwright-report/
+/.pw-browsers/
+
 # Browser-verification screenshots (regenerate via test/browser-verify.mjs)
 verify-shots
 
