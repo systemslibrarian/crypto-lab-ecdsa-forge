@@ -54,7 +54,7 @@
   --ink-1: #2c3a55;
   --ink-2: #4b5a78;
   --line: #c5cfe3;
-  --ok: #0a7d43;
+  --ok: #097039; /* dark enough for AA on the tinted --safe-bg badge */
   --bad: #c81e4a;
   --pub: #0a6aa8;
   --gold: #8a5a00;
@@ -79,6 +79,9 @@
 }
 
 html {
+  /* Paint the canvas directly: WebKit reports body->html background
+     propagation as transparent, which breaks contrast tooling. */
+  background-color: var(--bg-0);
   scroll-behavior: smooth;
 }
 
@@ -125,7 +128,7 @@ body {
   left: 0.5rem;
   z-index: 50;
   transform: translateY(-160%);
-  background: var(--field-bg);
+  background-color: var(--field-bg);
   color: var(--ink-0);
   border: 2px solid var(--focus);
   border-radius: var(--radius-sm);
@@ -149,7 +152,7 @@ body {
   gap: 0.75rem;
   margin: 0 -1.2rem; /* bleed to the #app padding edges */
   padding: 0.6rem 1.2rem;
-  background: var(--topbar-bg);
+  background-color: var(--topbar-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
@@ -199,12 +202,12 @@ body {
 
 .topnav a:hover {
   color: var(--ink-0);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
 }
 
 .topnav a[aria-current='true'] {
   color: var(--pub);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
 }
 
 .theme-toggle {
@@ -247,7 +250,7 @@ body {
 .hero,
 .exhibit {
   border: 1px solid var(--line);
-  background: var(--surface);
+  background-color: var(--surface);
   border-radius: var(--radius-lg);
   padding: clamp(1rem, 3vw, 1.6rem);
   backdrop-filter: blur(5px);
@@ -320,7 +323,7 @@ h1 {
 .step,
 .panel-inner {
   border: 1px solid var(--line);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
   border-radius: var(--radius-md);
   padding: 0.9rem;
 }
@@ -335,7 +338,7 @@ h1 {
 .hero-card.danger,
 .panel.danger {
   border-color: var(--bad);
-  background: var(--warn-bg);
+  background-color: var(--warn-bg);
 }
 
 .panel-grid {
@@ -379,7 +382,7 @@ select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: var(--field-bg);
+  background-color: var(--field-bg);
   color: var(--ink-0);
   padding: 0.62rem;
   min-height: var(--tap);
@@ -387,6 +390,15 @@ select {
 
 textarea {
   resize: vertical;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.8rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%238b949e' stroke-width='2' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
 }
 
 .button-row {
@@ -545,7 +557,7 @@ td {
 
 thead th {
   color: var(--pub);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
 }
 
 tbody th[scope='row'] {
@@ -675,7 +687,7 @@ td.warn {
   counter-increment: how;
   position: relative;
   border: 1px solid var(--line);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
   border-radius: var(--radius-md);
   padding: 0.8rem 0.8rem 0.8rem 2.2rem;
   color: var(--ink-1);
@@ -689,7 +701,7 @@ td.warn {
   width: 1.2rem;
   height: 1.2rem;
   border-radius: 50%;
-  background: var(--pub);
+  background-color: var(--pub);
   color: var(--bg-0);
   font-weight: 800;
   font-size: 0.8rem;
@@ -712,7 +724,7 @@ td.warn {
   width: 100%;
   height: auto;
   display: block;
-  background: var(--field-bg);
+  background-color: var(--field-bg);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
 }
@@ -839,7 +851,7 @@ pre.math {
   font-family: var(--mono);
   font-size: 0.86rem;
   line-height: 1.5;
-  background: var(--field-bg);
+  background-color: var(--field-bg);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 0.85rem;
@@ -876,7 +888,7 @@ pre.math {
 .step-card,
 .recover-card {
   border: 1px solid var(--line);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
   border-radius: var(--radius-sm);
   padding: 0.75rem;
 }
@@ -913,26 +925,26 @@ pre.math {
 .badge.ok {
   color: var(--ok);
   border-color: var(--safe);
-  background: var(--safe-bg);
+  background-color: var(--safe-bg);
 }
 
 .badge.bad {
   color: var(--bad);
   border-color: var(--bad);
-  background: var(--warn-bg);
+  background-color: var(--warn-bg);
 }
 
 /* Real attack mini cards + details */
 .mini {
   border: 1px solid var(--line);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
   border-radius: var(--radius-md);
   padding: 0.9rem;
 }
 
 .mini.danger {
   border-color: var(--bad);
-  background: var(--warn-bg);
+  background-color: var(--warn-bg);
 }
 
 .mini h4 {
@@ -944,7 +956,7 @@ details#attack-detail {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 0.4rem 0.7rem;
-  background: var(--surface-2);
+  background-color: var(--surface-2);
 }
 
 details#attack-detail summary {
@@ -970,7 +982,7 @@ details#attack-detail[open] summary {
 
 .gl-item {
   border: 1px solid var(--line);
-  background: var(--surface-2);
+  background-color: var(--surface-2);
   border-radius: var(--radius-sm);
   padding: 0.7rem 0.8rem;
 }
