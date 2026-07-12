@@ -50,11 +50,12 @@ npm run dev
 
 - Install: `npm install`
 - Build: `npm run build`
-- Run checks:
-  - `npx tsx test/phase1-check.ts`
-  - `npx tsx test/phase2-check.ts`
-  - `npx tsx test/rfc6979.test.ts`
-  - `npx tsx test/toycurve.test.ts`
+- Unit tests (Vitest): `npm test`
+  - `test/ecdsa.test.ts` — real 256-bit sign/verify round-trips, forgery rejection, and the modular-arithmetic helpers, on both secp256k1 and P-256.
+  - `test/attack.test.ts` — nonce-reuse key recovery equals the victim key exactly, the forged signature verifies under the victim public key, and recovery correctly refuses when nonces differ.
+  - `test/rfc6979.test.ts` — deterministic-nonce reproducibility plus the RFC 6979 Appendix A.2.5 known-answer vector.
+  - `test/toycurve.test.ts` — hand-checkable toy-curve group structure, ECDSA, and exhaustive nonce-reuse recovery across all `(d, k, e1, e2)`.
+- Accessibility gate (axe-core, WCAG A/AA): `npm run test:a11y` (builds are gated on this in CI).
 
 ## Teaching Features
 

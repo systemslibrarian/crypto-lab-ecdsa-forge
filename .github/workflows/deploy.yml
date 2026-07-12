@@ -35,6 +35,9 @@ jobs:
           # Build needs tsc/vite (devDeps) but not Playwright's browsers.
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
+      - name: Unit tests (crypto core — Vitest, KAT + property tests)
+        run: npm test
+
       - name: Build
         run: npm run build
 
