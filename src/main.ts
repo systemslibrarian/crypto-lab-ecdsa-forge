@@ -246,20 +246,16 @@ const html = `
 
   <main class="page" id="main-content" tabindex="-1">
     <div id="sr-live" class="sr-only" role="status" aria-live="polite"></div>
-    <header class="hero">
-      <p class="eyebrow">crypto-lab-ecdsa-forge</p>
-      <h1>The Signature That Runs the Internet</h1>
-      <p class="subtitle">ECDSA signs TLS certificates, Bitcoin transactions, SSH keys, JWTs, and passkeys. This lab shows exactly how it works — and how one reused nonce hands the private key to anyone watching.</p>
-      <div class="hero-grid">
-        <div class="hero-card danger">
-          <h2>Hazard</h2>
-          <p>Reuse the per-signature nonce and the private key falls out of public data by hand.</p>
-        </div>
-        <div class="hero-card safe">
-          <h2>Fix</h2>
-          <p>RFC 6979 derives the nonce from key + message, removing the RNG as a failure point.</p>
-        </div>
+    <header class="cl-hero">
+      <div class="cl-hero-main">
+        <h1 class="cl-hero-title">ECDSA Forge</h1>
+        <p class="cl-hero-sub">Elliptic-Curve Signatures · secp256k1 / P-256 · RFC 6979</p>
+        <p class="cl-hero-desc">Generate keys, sign a message, and watch a reused nonce k across two signatures algebraically recover the private key — then swap in RFC 6979 deterministic nonces as the fix.</p>
       </div>
+      <aside class="cl-hero-why" aria-label="Why it matters">
+        <span class="cl-hero-why-label">WHY IT MATTERS</span>
+        <p class="cl-hero-why-text">ECDSA authenticates TLS certificates, Bitcoin and Ethereum transactions, SSH keys, and passkeys. A single repeated nonce — from a weak RNG or a bug — has drained real wallets and cracked consoles. Deterministic nonces remove that failure mode entirely.</p>
+      </aside>
     </header>
 
     <section class="exhibit" id="exhibit-1" aria-labelledby="exhibit-1-title">
