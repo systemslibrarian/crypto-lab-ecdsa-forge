@@ -225,7 +225,9 @@ function renderToyAttack(
 
 const html = `
   <nav class="topbar" aria-label="Lab navigation">
-    <a class="brand" href="#main-content">
+    <!-- aria-label is load-bearing: .brand-text is display:none under 720px,
+         which would otherwise leave this link with no accessible name. -->
+    <a class="brand" href="#main-content" aria-label="ECDSA Forge — skip to main content">
       <span class="brand-mark" aria-hidden="true">⛓</span>
       <span class="brand-text">ECDSA Forge</span>
     </a>
@@ -348,14 +350,17 @@ Back-substitute:
       <article class="panel">
         <h3>Try it yourself on the toy curve</h3>
         <p>Every value below is a small integer. Change the inputs and watch the secret <span class="mono">d</span> fall out of public data.</p>
+        <!-- The for attributes are required: each label wraps an <output>,
+             which is itself a labelable element, so without for= the label
+             would bind to the <output> and leave the range with no name. -->
         <div class="toy-controls">
-          <label>Private key d = <output id="toy-d-out">7</output>
+          <label for="toy-d">Private key d = <output id="toy-d-out">7</output>
             <input type="range" id="toy-d" min="1" max="18" step="1" value="7" /></label>
-          <label>Reused nonce k = <output id="toy-k-out">11</output>
+          <label for="toy-k">Reused nonce k = <output id="toy-k-out">11</output>
             <input type="range" id="toy-k" min="1" max="18" step="1" value="11" /></label>
-          <label>Message hash e₁ = <output id="toy-e1-out">5</output>
+          <label for="toy-e1">Message hash e₁ = <output id="toy-e1-out">5</output>
             <input type="range" id="toy-e1" min="0" max="18" step="1" value="5" /></label>
-          <label>Message hash e₂ = <output id="toy-e2-out">9</output>
+          <label for="toy-e2">Message hash e₂ = <output id="toy-e2-out">9</output>
             <input type="range" id="toy-e2" min="0" max="18" step="1" value="9" /></label>
         </div>
         <div id="toy-attack-output"></div>
@@ -500,7 +505,9 @@ Back-substitute:
       </article>
     </section>
 
-    <footer class="page-footer">
+  </main>
+
+  <footer class="page-footer">
       <p>Related demos:
         <a href="https://systemslibrarian.github.io/crypto-lab-ed25519-forge/" target="_blank" rel="noopener noreferrer">crypto-lab-ed25519-forge</a> ·
         <a href="https://systemslibrarian.github.io/crypto-lab-nonce-lattice/" target="_blank" rel="noopener noreferrer">crypto-lab-nonce-lattice</a> ·
@@ -509,8 +516,7 @@ Back-substitute:
         <a href="https://systemslibrarian.github.io/crypto-lab-jwt-forge/" target="_blank" rel="noopener noreferrer">crypto-lab-jwt-forge</a>
       </p>
       <p>Educational ECDSA lab — not for production signing. Curve arithmetic by <span class="mono">@noble/curves</span>; ECDSA, the attack, RFC 6979, and the toy curve are implemented from scratch in this repo.</p>
-    </footer>
-  </main>
+  </footer>
 `;
 
 app.innerHTML = html;

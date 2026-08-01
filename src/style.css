@@ -190,7 +190,9 @@ body {
 }
 
 .topnav a {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
   white-space: nowrap;
   color: var(--ink-2);
   text-decoration: none;
@@ -487,6 +489,12 @@ button:active {
   color: var(--pub);
 }
 
+/* Attack steps interpolate long truncated hex tokens; let them break rather
+   than force horizontal page scroll at 360px. */
+.step p {
+  overflow-wrap: anywhere;
+}
+
 .censored {
   display: inline-block;
   background: repeating-linear-gradient(
@@ -572,6 +580,9 @@ td.warn {
 }
 
 .page-footer {
+  /* Sits outside <main> so its contentinfo role is not nested inside another
+     landmark; the margin replaces the grid gap it used to get from .page. */
+  margin-top: 1.2rem;
   color: var(--ink-2);
   font-size: 0.9rem;
   text-align: center;
@@ -807,13 +818,14 @@ td.warn {
 input[type='range'] {
   width: 100%;
   accent-color: var(--pub);
-  min-height: 1.6rem;
+  min-height: var(--tap);
   cursor: pointer;
 }
 
 .inline-check {
   display: flex;
   align-items: center;
+  min-height: var(--tap);
   gap: 0.45rem;
   font-weight: 600;
   margin-top: 0.5rem;
@@ -963,7 +975,7 @@ details#attack-detail summary {
   cursor: pointer;
   font-weight: 700;
   color: var(--pub);
-  min-height: 1.8rem;
+  min-height: var(--tap);
   display: flex;
   align-items: center;
 }
@@ -1049,7 +1061,6 @@ details#attack-detail[open] summary {
   }
 }
 
-/* BEGIN cl-hero standard — managed, keep in sync across fleet */
 /* Map fleet tokens onto this demo's theme variables so hero passes axe
    contrast in BOTH themes. --accent = the eyebrow/tag hue (--pub). */
 .cl-hero{
@@ -1066,5 +1077,4 @@ details#attack-detail[open] summary {
 .cl-hero-why{flex:0 1 min(40%,26rem);min-width:min(100%,15rem);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.05rem;background:color-mix(in oklab,var(--accent) 6%,transparent);}
 .cl-hero-why-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.14em;color:var(--accent);}
 .cl-hero-why-text{margin:.35rem 0 0;font-size:.95rem;line-height:1.5;color:var(--text);}
-@media (max-width:640px){.cl-hero{flex-direction:column;}.cl-hero-why{flex-basis:auto;width:100%;}}
-/* END cl-hero standard */
+@media (max-width:640px){.cl-hero{flex-direction:column;}.cl-hero-why{flex-basis:auto;width:100%;}.cl-hero-main{flex-basis:auto;min-width:0;}}
