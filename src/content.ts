@@ -118,7 +118,7 @@ export const CITATIONS: Citation[] = [
     title: 'Console Hacking 2010 — PS3 Epic Fail',
     source: 'fail0verflow, 27C3',
     year: '2010',
-    note: 'Sony reused a constant ECDSA nonce in firmware signing; the master private key was recovered exactly as shown in Exhibit 4.',
+    note: 'Sony reused a constant ECDSA nonce in firmware signing; the master private key was recovered exactly as shown in Exhibit 3.',
     url: 'https://media.ccc.de/v/27c3-4087-en-console_hacking_2010',
   },
   {

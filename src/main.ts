@@ -401,7 +401,6 @@ Back-substitute:
           <li>Sony PlayStation 3 (2010): a constant nonce in firmware signing exposed the master key.</li>
           <li>Android Bitcoin wallets (2013): weak SecureRandom caused nonce reuse and on-chain theft.</li>
           <li>Debian OpenSSL (2008): broken entropy made keys and nonces guessable at scale.</li>
-          <li>TouchTunes jukeboxes (2017): forged signatures enabled payment abuse.</li>
         </ul>
       </aside>
     </section>
@@ -410,7 +409,7 @@ Back-substitute:
       <div class="section-head">
         <p class="exhibit-tag" aria-hidden="true">Exhibit 4</p>
         <h2 id="exhibit-rfc-title">RFC 6979 Deterministic Nonces</h2>
-        <p>Random nonces are only as safe as the RNG behind them. RFC 6979 derives k from the private key and message hash via HMAC-SHA-256 — reproducible, and impossible to repeat across different messages.</p>
+        <p>Random nonces are only as safe as the RNG behind them. RFC 6979 derives k from the private key and message hash via HMAC-SHA-256 — reproducible for the same message, and computationally infeasible to repeat across different messages. That guarantee is not absolute: it rests on HMAC-SHA-256 behaving as a pseudorandom function, so two different messages colliding to the same k is negligibly unlikely rather than impossible.</p>
       </div>
       <article class="panel">
         <label for="msg-compare">Message for comparison</label>
@@ -420,7 +419,7 @@ Back-substitute:
           <button id="btn-det-sample" class="btn safe">Sign RFC 6979</button>
           <button id="btn-reset-sample" class="btn ghost">Reset Samples</button>
         </div>
-        <p class="hint">Sign the same message twice with each method. Random nonces give different r every time; RFC 6979 gives the <em>same</em> r — deterministic, yet never reused across different messages.</p>
+        <p class="hint">Sign the same message twice with each method. Random nonces give different r every time; RFC 6979 gives the <em>same</em> r — deterministic, yet with negligible chance of reuse across different messages.</p>
         <div class="compare-grid">
           <div class="panel-inner">
             <h3>Random nonce output</h3>
