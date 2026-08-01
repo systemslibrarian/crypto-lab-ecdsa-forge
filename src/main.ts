@@ -18,8 +18,10 @@ import {
   TOY,
   allPoints,
   scalarMul,
+  toyMod,
   toyRecover,
   toySign,
+  toyVerify,
   type ToyMaybePoint,
 } from './toycurve';
 import { X_MIN, addReal, curveY, type RealPoint } from './realcurve';
@@ -189,9 +191,33 @@ function renderToyAttack(
     const msg = 's₁ = s₂ here, so (s₁−s₂) has no inverse. Change a message hash and retry.';
     return { html: `<p class="status bad">${msg}</p>`, summary: msg };
   }
-  const ok = rec.d === d && rec.k === k;
+
+  // Both captured signatures are checked against the published key Q with the
+  // ordinary verify equation — the panel should not assert they are valid.
+  const sig1Valid = toyVerify(e1, { r: s1.r, s: s1.s }, Q);
+  const sig2Valid = toyVerify(e2, { r: s2.r, s: s2.s }, Q);
+
+  // The payoff claim ("the secret is exposed") is only worth making if the
+  // recovered d can actually mint a NEW signature that verifies under Q. Sign a
+  // third hash with the recovered key and a fresh nonce, then verify it.
+  const forgedHash = toyMod(e1 + e2 + 3, TOY.n);
+  let forged: { k: number; r: number; s: number } | null = null;
+  let forgeryVerifies = false;
+  for (let kf = 1; kf < TOY.n; kf += 1) {
+    if (kf === k) continue; // a fresh nonce, not the reused one
+    try {
+      const sf = toySign(rec.d, forgedHash, kf);
+      forged = { k: kf, r: sf.r, s: sf.s };
+      forgeryVerifies = toyVerify(forgedHash, { r: sf.r, s: sf.s }, Q);
+      break;
+    } catch {
+      // degenerate nonce for this key; try the next one
+    }
+  }
+
+  const ok = rec.d === d && rec.k === k && sig1Valid && sig2Valid && forgeryVerifies;
   const summary = ok
-    ? `Attack succeeds: recovered private key d = ${rec.d}, matching the real key.`
+    ? `Attack succeeds: recovered private key d = ${rec.d}, matching the real key, and a new signature forged with it verifies under Q.`
     : `Unexpected mismatch: recovered d = ${rec.d}, real d = ${d}.`;
 
   const html = `
@@ -202,11 +228,13 @@ function renderToyAttack(
           <h4>Signature 1 &nbsp;<span class="dim">message hash e₁ = ${e1}</span></h4>
           <p class="mono">R = ${k}·G = ${fmtPoint(s1.R)} → r = R.x mod ${n} = <strong>${s1.r}</strong></p>
           <p class="mono">s₁ = k⁻¹·(e₁ + r·d) = ${s1.kInv}·(${e1} + ${s1.r}·${d}) mod ${n} = <strong>${s1.s}</strong></p>
+          <p class="mono">verify u₁·G + u₂·Q against r: <strong>${sig1Valid ? 'valid' : 'INVALID'}</strong></p>
         </div>
         <div class="step-card">
           <h4>Signature 2 &nbsp;<span class="dim">message hash e₂ = ${e2}</span></h4>
           <p class="mono">R = ${k}·G = ${fmtPoint(s2.R)} → r = <strong>${s2.r}</strong> &nbsp;<span class="tell">← same r! nonce reused</span></p>
           <p class="mono">s₂ = ${s2.kInv}·(${e2} + ${s2.r}·${d}) mod ${n} = <strong>${s2.s}</strong></p>
+          <p class="mono">verify u₁·G + u₂·Q against r: <strong>${sig2Valid ? 'valid' : 'INVALID'}</strong></p>
         </div>
       </div>
       <div class="recover-card">
@@ -214,9 +242,18 @@ function renderToyAttack(
         <p class="mono">k = (e₁−e₂)·(s₁−s₂)⁻¹ = (${rec.eDelta})·(${rec.sDelta})⁻¹ mod ${n} = <strong>${rec.k}</strong></p>
         <p class="mono">d = (s₁·k − e₁)·r⁻¹ = (${s1.s}·${rec.k} − ${e1})·${rec.rInv} mod ${n} = <strong>${rec.d}</strong></p>
       </div>
+      <div class="recover-card">
+        <h4>Eve forges a brand-new signature with the recovered key</h4>
+        ${
+          forged
+            ? `<p class="mono">Sign a fresh hash e₃ = ${forgedHash} with d = ${rec.d} and a new nonce k′ = ${forged.k} → (r, s) = (${forged.r}, ${forged.s})</p>
+        <p class="mono">Verified against the victim's published Q = ${fmtPoint(Q)}: <strong>${forgeryVerifies ? 'accepted' : 'REJECTED'}</strong></p>`
+            : `<p class="mono">No non-degenerate nonce available for this key on a 19-point group.</p>`
+        }
+      </div>
       <p class="badge ${ok ? 'ok' : 'bad'}">${
         ok
-          ? `✓ Recovered d = ${rec.d} equals the real private key d = ${d}. The secret is fully exposed.`
+          ? `✓ Recovered d = ${rec.d} equals the real private key d = ${d}, and a signature it produced verifies under Q. The secret is fully exposed.`
           : `Unexpected mismatch — recovered d = ${rec.d}, real d = ${d}.`
       }</p>
     </div>`;
@@ -316,12 +353,12 @@ const html = `
         </article>
         <article class="panel">
           <h3>The real thing: a finite field</h3>
-          <p>Cryptography uses the same rules over a finite field, so the “curve” is a scatter of points. Here is a toy curve <span class="mono">y² = x³ + 2x + 2 (mod 17)</span> with 18 points and generator <span class="mono">G = (5, 1)</span>.</p>
+          <p>Cryptography uses the same rules over a finite field, so the “curve” is a scatter of points. Here is a toy curve <span class="mono">y² = x³ + 2x + 2 (mod 17)</span> with 18 plotted points and generator <span class="mono">G = (5, 1)</span>.</p>
           <div class="viz" id="viz-discrete"></div>
           <label for="vd-slider">Walk k·G &nbsp;<span class="dim">(scalar multiplication)</span></label>
           <input type="range" id="vd-slider" min="1" max="18" step="1" value="5" />
           <p class="viz-label" id="vd-label"></p>
-          <p class="hint">Note: the two panels use different curves on purpose — the left needs a smooth real-number shape to draw, while this one needs a small <em>prime</em>-order group (19 points) so the toy attack's modular inverses always exist. The group law is identical.</p>
+          <p class="hint">Note: the two panels use different curves on purpose — the left needs a smooth real-number shape to draw, while this one needs a small <em>prime</em>-order group so the toy attack's modular inverses always exist. The 18 dots are the affine points; counting the point at infinity 𝒪 gives group order <span class="mono">n = 19</span>, which is prime. The group law is identical.</p>
         </article>
       </div>
     </section>
