@@ -22,6 +22,10 @@
   --ink-1: #c2cfe8;
   --ink-2: #93a6cd;
   --line: #2a3a57;
+  /* Control boundaries only. textarea/select are filled with --field-bg, which is
+     ~1.0:1 against the panel behind them, so their border is the sole boundary and
+     WCAG 2.1 SC 1.4.11 requires 3:1. --line is unchanged for decorative rules. */
+  --line-strong: #476293;
   --ok: #4dffa3;
   --bad: #ff5c80;
   --pub: #3fd8ff;
@@ -54,6 +58,7 @@
   --ink-1: #2c3a55;
   --ink-2: #4b5a78;
   --line: #c5cfe3;
+  --line-strong: #788fbe;
   --ok: #097039; /* dark enough for AA on the tinted --safe-bg badge */
   --bad: #c81e4a;
   --pub: #0a6aa8;
@@ -66,7 +71,7 @@
   --surface-2: rgba(255, 255, 255, 0.92);
   --field-bg: #ffffff;
   --btn-bg: linear-gradient(180deg, #ffffff, #eef2fb);
-  --btn-border: #9fb1d4;
+  --btn-border: #6e89be;
   --btn-safe-bg: linear-gradient(180deg, #e3f6ea, #d3eedd);
   --btn-danger-bg: linear-gradient(180deg, #fce3ea, #f7d3dd);
   --topbar-bg: rgba(244, 246, 252, 0.85);
@@ -382,7 +387,7 @@ button {
 textarea,
 select {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   background-color: var(--field-bg);
   color: var(--ink-0);
