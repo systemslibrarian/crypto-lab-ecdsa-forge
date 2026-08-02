@@ -55,7 +55,9 @@ npm run dev
   - `test/attack.test.ts` — nonce-reuse key recovery equals the victim key exactly, the forged signature verifies under the victim public key, and recovery correctly refuses when nonces differ.
   - `test/rfc6979.test.ts` — deterministic-nonce reproducibility plus the RFC 6979 Appendix A.2.5 known-answer vector.
   - `test/toycurve.test.ts` — hand-checkable toy-curve group structure, ECDSA, and exhaustive nonce-reuse recovery across all `(d, k, e1, e2)`.
-- Accessibility gate (axe-core, WCAG A/AA): `npm run test:a11y` (builds are gated on this in CI).
+- Browser gate (Playwright): `npm run test:a11y` — runs both `e2e/` suites against the production build (builds are gated on this in CI).
+  - `e2e/a11y.spec.ts` — axe-core WCAG A/AA scan in both themes, every `<details>` expanded.
+  - `e2e/claims.spec.ts` — the page's load-bearing claims, asserted against the rendered DOM: the recovered private key equals the victim key *and* derives the published public key, the captured signatures verify, the toy panel's integers are re-derived independently, every failure path (no key, no signature, tampered message, identical hashes, degenerate nonce, RFC 6979) is reached and explains itself, and the 18 plotted toy points plus 𝒪 account for the claimed order n = 19.
 
 ## Teaching Features
 
