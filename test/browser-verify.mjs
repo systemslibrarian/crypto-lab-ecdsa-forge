@@ -76,7 +76,7 @@ ok('real attack recovered key (✓ identical)', full.includes('✓ identical'));
 
 // --- Screenshots: desktop dark, desktop light, mobile -----------------------
 await page.screenshot({ path: `${SHOTS}desktop-dark.png`, fullPage: true });
-await page.click('#theme-toggle');
+await page.click('#cl-theme-toggle');
 await page.waitForTimeout(150);
 await page.screenshot({ path: `${SHOTS}desktop-light.png`, fullPage: true });
 
