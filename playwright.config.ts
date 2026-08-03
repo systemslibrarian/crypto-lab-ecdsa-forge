@@ -16,12 +16,12 @@ export default defineConfig({
     // Build first: `vite preview` only serves the existing dist/, so without
     // this a broken build leaves the last good bundle in place and the suite
     // passes green against source that no longer compiles.
-    command: 'npm run build && npm run preview -- --port 4224 --strictPort',
-    url: 'http://localhost:4224/crypto-lab-ecdsa-forge/',
+    command: 'npm run build && npm run preview -- --port 4631 --strictPort',
+    url: 'http://localhost:4631/crypto-lab-ecdsa-forge/',
     reuseExistingServer: !process.env.CI,
   },
   use: {
-    baseURL: 'http://localhost:4224/crypto-lab-ecdsa-forge/',
+    baseURL: 'http://localhost:4631/crypto-lab-ecdsa-forge/',
     colorScheme: 'dark',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
