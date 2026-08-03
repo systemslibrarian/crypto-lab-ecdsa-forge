@@ -1,9 +1,9 @@
 // Headless browser verification of the rendered app.
-// Usage: serve `dist` on :4174 (npm run preview), then `node test/browser-verify.mjs`.
+// Usage: serve `dist` on :4713 (npm run preview), then `node test/browser-verify.mjs`.
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const APP_URL = 'http://localhost:4174/crypto-lab-ecdsa-forge/';
+const APP_URL = 'http://localhost:4713/crypto-lab-ecdsa-forge/';
 const SHOTS = 'verify-shots/';
 mkdirSync(SHOTS, { recursive: true });
 
