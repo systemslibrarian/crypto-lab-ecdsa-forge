@@ -74,11 +74,8 @@ await page.waitForFunction(
 const full = await page.$eval('#attack-fullnums', (el) => el.textContent || '');
 ok('real attack recovered key (✓ identical)', full.includes('✓ identical'));
 
-// --- Screenshots: desktop dark, desktop light, mobile -----------------------
+// --- Screenshots: desktop, mobile -------------------------------------------
 await page.screenshot({ path: `${SHOTS}desktop-dark.png`, fullPage: true });
-await page.click('#cl-theme-toggle');
-await page.waitForTimeout(150);
-await page.screenshot({ path: `${SHOTS}desktop-light.png`, fullPage: true });
 
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
 await mobile.goto(APP_URL, { waitUntil: 'networkidle' });

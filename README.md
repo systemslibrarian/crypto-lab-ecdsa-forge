@@ -64,7 +64,7 @@ npm run dev
 - **Curve geometry, visualized** — point addition over the reals (chord-and-tangent, plus doubling) and the same group as a finite field of points, with the `k·G` walk that makes the discrete-log gap tangible.
 - **Transparent nonce-reuse attack** — the two-equations / two-unknowns derivation, an interactive toy curve (`y² = x³ + 2x + 2 mod 17`, 18 affine points, prime group order 19) where every value is a hand-checkable small integer, and the same attack run live on real 256-bit keys with full values and an explicit recovered-equals-victim proof. On the toy curve the panel runs the actual verification equation on both captured signatures and on a fresh signature minted with the recovered key, so "the secret is exposed" is shown rather than asserted.
 - **Glossary & primary sources** — every term defined, every claim cited to FIPS 186-5, SEC 1/2, RFC 6979, and the PS3 disclosure.
-- **Accessible & responsive** — skip link, ARIA landmarks/live regions, keyboard-navigable, light/dark theme, reduced-motion support, and a mobile layout down to small screens.
+- **Accessible & responsive** — skip link, ARIA landmarks/live regions, keyboard-navigable, reduced-motion support, and a mobile layout down to small screens.
 
 ## License
 
