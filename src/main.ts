@@ -277,10 +277,6 @@ const html = `
       <li><a href="#exhibit-compare">vs Ed25519</a></li>
       <li><a href="#reference">Reference</a></li>
     </ul>
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
-      <span class="theme-icon" aria-hidden="true"></span>
-      <span class="theme-label">Theme</span>
-    </button>
   </nav>
 
   <main class="page" id="main-content" tabindex="-1">
@@ -825,33 +821,9 @@ queueMicrotask(async () => {
   }
 });
 
-// --- Theme toggle (persisted, system-aware) --------------------------------
-const themeToggle = getById<HTMLButtonElement>('theme-toggle');
-const themeLabel = themeToggle.querySelector<HTMLSpanElement>('.theme-label');
-
-const applyTheme = (theme: 'light' | 'dark') => {
-  document.documentElement.setAttribute('data-theme', theme);
-  const goesTo = theme === 'dark' ? 'light' : 'dark';
-  themeToggle.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
-  themeToggle.setAttribute('aria-label', `Switch to ${goesTo} theme (current: ${theme})`);
-  themeToggle.setAttribute('title', `Switch to ${goesTo} theme`);
-  if (themeLabel) themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
-};
-
-const currentTheme = (): 'light' | 'dark' =>
-  document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-
-applyTheme(currentTheme());
-
-themeToggle.addEventListener('click', () => {
-  const next = currentTheme() === 'dark' ? 'light' : 'dark';
-  try {
-    localStorage.setItem('theme', next);
-  } catch {
-    // storage may be unavailable (private mode); theme still applies for the session
-  }
-  applyTheme(next);
-});
+// Dark is the only theme. It is pinned with a literal by the boot script in
+// index.html before first paint, so there is nothing for this module to set,
+// read, or offer a way to change.
 
 // --- Active-section highlighting in the top navigation ---------------------
 const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('#topnav a'));
