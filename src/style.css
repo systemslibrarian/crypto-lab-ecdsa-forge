@@ -254,6 +254,19 @@ body {
   padding-top: 1.2rem;
 }
 
+/* A grid item's default `min-width: auto` is its min-content width, so ONE wide
+   descendant widens this single-column grid and every sibling with it. At 390px
+   the unbroken key string in the Victim panel did exactly that: the grid grew to
+   665px and the page scrolled sideways by 288px, with `header.cl-hero` reported
+   as the widest element even though the hero's own rules are fine -- its
+   `min-width: min(100%, 20rem)` was resolving 100% against a container the key
+   had already widened. Measured in Chromium and WebKit at 390x720: 288px and
+   287px before, 0 and 0 with this rule and the `.censored` wrap below. Each rule
+   alone leaves 194px; both are needed. */
+.page > * {
+  min-width: 0;
+}
+
 .hero,
 .exhibit {
   border: 1px solid var(--line);
@@ -497,6 +510,14 @@ button:active {
 /* Attack steps interpolate long truncated hex tokens; let them break rather
    than force horizontal page scroll at 360px. */
 .step p {
+  overflow-wrap: anywhere;
+}
+
+/* The key has no spaces, so without this it cannot break and becomes the
+   min-content width of the whole page grid. The inner span holds the text, so
+   both need it. See the note on `.page > *`. */
+.censored,
+.censored * {
   overflow-wrap: anywhere;
 }
 
