@@ -43,7 +43,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     term: 'Nonce',
     symbol: 'k',
     definition:
-      '“Number used once.” A fresh per-signature secret scalar. It must be unpredictable AND never repeated — reuse leaks d outright.',
+      'A secret signing scalar that must stay unpredictable to the attacker. Reusing it under one key across distinct message hashes can expose d. Deterministic signing repeats the same nonce for the same hash, which simply repeats the signature.',
   },
   {
     term: 'Curve order',
@@ -110,7 +110,7 @@ export const CITATIONS: Citation[] = [
     title: 'RFC 6979 — Deterministic Usage of DSA and ECDSA',
     source: 'T. Pornin',
     year: '2013',
-    note: 'Derives the nonce k from the key and message via HMAC, eliminating RNG-failure nonce reuse. Verified here against Appendix A.2.5.',
+    note: 'Derives the nonce k from the key and message hash via HMAC, avoiding fresh per-signature randomness. Verified here against Appendix A.2.5.',
     url: 'https://datatracker.ietf.org/doc/html/rfc6979',
   },
   {
@@ -118,7 +118,7 @@ export const CITATIONS: Citation[] = [
     title: 'Console Hacking 2010 — PS3 Epic Fail',
     source: 'fail0verflow, 27C3',
     year: '2010',
-    note: 'Sony reused a constant ECDSA nonce in firmware signing; the master private key was recovered exactly as shown in Exhibit 3.',
+    note: 'Sony’s ECDSA nonce-reuse failure exposed a signing key. Exhibit 3 teaches the same algebraic failure; it does not reproduce the console exploit.',
     url: 'https://media.ccc.de/v/27c3-4087-en-console_hacking_2010',
   },
   {
