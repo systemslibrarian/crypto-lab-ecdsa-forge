@@ -289,7 +289,7 @@ const html = `
       </div>
       <aside class="cl-hero-why" aria-label="Why it matters">
         <span class="cl-hero-why-label">WHY IT MATTERS</span>
-        <p class="cl-hero-why-text">ECDSA authenticates TLS certificates, Bitcoin and Ethereum transactions, SSH keys, and passkeys. A single repeated nonce — from a weak RNG or a bug — has drained real wallets and cracked consoles. Deterministic nonces remove that failure mode entirely.</p>
+        <p class="cl-hero-why-text">ECDSA authenticates TLS certificates, Bitcoin and Ethereum transactions, SSH keys, and passkeys. A single repeated nonce — from a weak RNG or a bug — has drained real wallets and cracked consoles. Correct deterministic nonce derivation avoids dependence on fresh randomness for each signature. Bugs, faults, and side channels still matter.</p>
       </aside>
     </header>
 
@@ -417,7 +417,7 @@ Back-substitute:
         </div>
         <ol class="timeline" id="attack-timeline" aria-live="polite">
           <li class="step"><h4>Step 1 · Two signed messages</h4><p id="step1">Waiting...</p></li>
-          <li class="step"><h4>Step 2 · Spot the reused nonce</h4><p id="step2">Waiting...</p></li>
+          <li class="step"><h4>Step 2 · Inspect the repeated r</h4><p id="step2">Waiting...</p></li>
           <li class="step"><h4>Step 3 · Recover the nonce k</h4><p id="step3">Waiting...</p></li>
           <li class="step"><h4>Step 4 · Recover the private key d</h4><p id="step4">Waiting...</p></li>
           <li class="step"><h4>Step 5 · Forge a new signature</h4><p id="step5">Waiting...</p></li>
@@ -442,7 +442,7 @@ Back-substitute:
       <div class="section-head">
         <p class="exhibit-tag" aria-hidden="true">Exhibit 4</p>
         <h2 id="exhibit-rfc-title">RFC 6979 Deterministic Nonces</h2>
-        <p>Random nonces are only as safe as the RNG behind them. RFC 6979 derives k from the private key and message hash via HMAC-SHA-256 — reproducible for the same message, and computationally infeasible to repeat across different messages. That guarantee is not absolute: it rests on HMAC-SHA-256 behaving as a pseudorandom function, so two different messages colliding to the same k is negligibly unlikely rather than impossible.</p>
+        <p>Random nonces are only as safe as the RNG behind them. RFC 6979 derives k from the private key and message hash via HMAC-SHA-256. The same key and message hash reproduce the same nonce and signature. Across distinct message hashes, nonce collisions should be negligibly unlikely under the construction’s assumptions. Determinism does not protect against bugs, fault injection, or side-channel leakage.</p>
       </div>
       <article class="panel">
         <label for="msg-compare">Message for comparison</label>
@@ -452,7 +452,7 @@ Back-substitute:
           <button id="btn-det-sample" class="btn safe">Sign RFC 6979</button>
           <button id="btn-reset-sample" class="btn ghost">Reset Samples</button>
         </div>
-        <p class="hint">Sign the same message twice with each method. Random nonces give different r every time; RFC 6979 gives the <em>same</em> r — deterministic, yet with negligible chance of reuse across different messages.</p>
+        <p class="hint">Sign the same message twice with each method. Random nonces almost certainly give different r in this small sample; RFC 6979 gives the <em>same</em> signature for the same key and message hash. Repeating that identical signature does not supply the distinct equations needed for key recovery.</p>
         <div class="compare-grid">
           <div class="panel-inner">
             <h3>Random nonce output</h3>
@@ -488,7 +488,7 @@ Back-substitute:
       <div class="section-head">
         <p class="exhibit-tag" aria-hidden="true">Exhibit 6</p>
         <h2 id="exhibit-compare-title">ECDSA vs Ed25519</h2>
-        <p>Ed25519 was designed later to remove common ECDSA footguns — chiefly the nonce.</p>
+        <p>Ed25519 derives its secret per-signature nonce deterministically, avoiding the need to supply fresh nonce randomness for each signature.</p>
       </div>
       <article class="panel table-wrap" tabindex="0" role="region" aria-label="ECDSA versus Ed25519 comparison table">
         <table>
@@ -501,12 +501,13 @@ Back-substitute:
             <tr><th scope="row">Signature size</th><td>~70 DER / 64 raw</td><td>~70 DER / 64 raw</td><td>64 bytes</td></tr>
             <tr><th scope="row">Signing speed</th><td>Fast</td><td>Fast</td><td>Faster</td></tr>
             <tr><th scope="row">Deterministic by default</th><td>No (RFC 6979 needed)</td><td>No (RFC 6979 needed)</td><td>Yes</td></tr>
-            <tr><th scope="row">Nonce reuse catastrophic</th><td class="warn">Yes</td><td class="warn">Yes</td><td>No by design</td></tr>
+            <tr><th scope="row">Nonce reuse catastrophic</th><td class="warn">Yes</td><td class="warn">Yes</td><td class="warn">Yes if forced across different challenges</td></tr>
             <tr><th scope="row">Malleable signatures</th><td>Yes</td><td>Yes</td><td>No</td></tr>
             <tr><th scope="row">Best use today</th><td>Bitcoin / Ethereum interoperability</td><td>TLS, JWT, WebAuthn compatibility</td><td>New systems when possible</td></tr>
           </tbody>
         </table>
       </article>
+      <p class="hint">Ed25519’s deterministic derivation prevents the usual fresh-RNG nonce failure. If a bug or fault forces reuse of the same secret nonce under one signing key across distinct challenges, the signing scalar can still be recovered. Repeating an identical deterministic signature is a different case.</p>
     </section>
 
     <section class="exhibit" id="reference" aria-labelledby="reference-title">
@@ -648,7 +649,7 @@ getById<HTMLButtonElement>('btn-attack').addEventListener('click', async () => {
   victimPub.textContent = shortHex(result.victimKeyPair.publicKey, 18);
 
   step1.textContent = `Alice signs "${result.message1}" and "${result.message2}" reusing nonce k. sig1=(r=${shortHex(result.sig1.r)}, s1=${shortHex(result.sig1.s)}), sig2=(r=${shortHex(result.sig2.r)}, s2=${shortHex(result.sig2.s)}).`;
-  step2.textContent = `Both signatures share the same r = ${shortHex(result.sig1.r)}. Identical r is the public proof of nonce reuse.`;
+  step2.textContent = `Both signatures share the same r = ${shortHex(result.sig1.r)}. In this experiment Alice deliberately reused k. Equal r is a warning sign, not proof of identical nonces by itself: k and −k have the same point x-coordinate.`;
 
   const e1 = await hashMessage(textToBytes(result.message1), activeCurve);
   const e2 = await hashMessage(textToBytes(result.message2), activeCurve);
@@ -726,7 +727,7 @@ getById<HTMLButtonElement>('btn-safe-attack').addEventListener('click', async ()
   const n = curveOrder(keyPair.curve);
 
   if (sig1.r !== sig2.r && recovery === null) {
-    setStatus(safeAttackStatus, `Attack blocked by construction: different messages ⇒ different nonces ⇒ r1 ≠ r2, so there is no shared nonce to exploit (n=${shortHex(n, 14)}).`, 'ok');
+    setStatus(safeAttackStatus, `Recovery refused in this run: the two deterministic signatures have r1 ≠ r2, so there is no shared nonce for this attack to exploit (n=${shortHex(n, 14)}).`, 'ok');
     return;
   }
 

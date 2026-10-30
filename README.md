@@ -21,13 +21,14 @@ The demo visualizes ECDSA on both a hand-checkable toy curve and real 256-bit ke
 ## What Can Go Wrong
 
 - This demo uses @noble/curves for scalar multiplication and curve arithmetic. Production systems also need comprehensive side-channel controls and hardened key management.
-- The nonce reuse attack here is real. If two signatures share nonce k, private key recovery follows directly from modular arithmetic.
+- The nonce reuse attack here is real. Under one key, reusing nonce k for distinct message hashes permits private key recovery when the required differences are invertible. Identical deterministic signatures do not provide those distinct equations.
 - Browser JavaScript timing is noisy and can leak execution patterns; timing and fault attacks are out of scope but relevant in real signing oracles.
+- Ed25519 also derives its signing nonce deterministically. If an implementation bug or fault forces the same secret nonce under one key across distinct challenges, the signing scalar can still be recovered. Determinism is not immunity to actual nonce reuse.
 - ECDSA signatures are malleable: both (r, s) and (r, n-s) can verify unless low-S normalization is enforced by protocol rules.
 
 ## Real-World Usage
 
-ECDSA is standardized in NIST FIPS 186-5 and SEC 2. It underpins TLS 1.2/1.3 certificates, Bitcoin, Ethereum, SSH ECDSA keys, secure boot chains, JWT ES256 tokens, and WebAuthn/passkeys. Global verification volume is massive (roughly 10^9+ checks daily). RFC 6979 (Pornin, 2013) deterministic nonces are now standard in mature ECDSA deployments to eliminate nonce entropy failures.
+ECDSA is standardized in NIST FIPS 186-5 and SEC 2. It underpins TLS 1.2/1.3 certificates, Bitcoin, Ethereum, SSH ECDSA keys, secure boot chains, JWT ES256 tokens, and WebAuthn/passkeys. Global verification volume is massive (roughly 10^9+ checks daily). RFC 6979 (Pornin, 2013) deterministic nonces are now standard in mature ECDSA deployments to avoid relying on fresh per-signature randomness; they do not eliminate implementation bugs, faults, or side channels.
 
 ## How to Run Locally
 

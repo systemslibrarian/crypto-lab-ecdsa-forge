@@ -561,7 +561,7 @@ test('Toy attack: every failure path is reachable and says why', async ({ page }
 // Exhibit 4 — RFC 6979 as the fix
 // ---------------------------------------------------------------------------
 
-test('Exhibit 4: deterministic nonces repeat r for one message and never across messages', async ({
+test('Exhibit 4: deterministic nonces reproduce one message and differ for the sampled second message', async ({
   page,
 }) => {
   await page.goto('./');
@@ -590,8 +590,8 @@ test('Exhibit 4: deterministic nonces repeat r for one message and never across 
   expect(det[0]).toBe(det[1]);
   expect(det[0]).toMatch(/^k=[0-9a-f]{12}\.\.\.[0-9a-f]{12}, r=/);
 
-  // A different message ⇒ a different nonce ⇒ a different r. This is exactly
-  // why the nonce-reuse attack has nothing to grab.
+  // This second message produces a different nonce and r in the sampled run.
+  // The finite check does not establish that collisions are impossible.
   await page.fill('#msg-compare', 'Nonce discipline is survival. (2)');
   await page.click('#btn-det-sample');
   await expect(detList).toHaveCount(3);
@@ -625,9 +625,9 @@ test('Exhibit 4: the nonce-reuse attack fails against RFC 6979 and says why', as
   await expect(status).toHaveText('No test run yet.');
 
   await page.click('#btn-safe-attack');
-  await expect(status).toContainText('Attack blocked by construction');
-  await expect(status).toContainText('different messages ⇒ different nonces ⇒ r1 ≠ r2');
-  await expect(status).toContainText('there is no shared nonce to exploit');
+  await expect(status).toContainText('Recovery refused in this run');
+  await expect(status).toContainText('the two deterministic signatures have r1 ≠ r2');
+  await expect(status).toContainText('there is no shared nonce for this attack to exploit');
   await expect(status).toHaveClass(/ok/);
   // The failure branch must not be what we are reading.
   await expect(status).not.toContainText('Unexpected result');
@@ -638,7 +638,7 @@ test('Exhibit 4: the nonce-reuse attack fails against RFC 6979 and says why', as
   // Same verdict on P-256, with that curve's order.
   await page.selectOption('#curve-select', 'p256');
   await page.click('#btn-safe-attack');
-  await expect(status).toContainText('Attack blocked by construction');
+  await expect(status).toContainText('Recovery refused in this run');
   await expect(status).toContainText(`n=${shortHex(orderOf('p256'), 14)}`);
   await expect(status).toHaveClass(/ok/);
 });
