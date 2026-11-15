@@ -475,8 +475,8 @@ Back-substitute:
         <p>A daily signature backbone for identity, transport, and money.</p>
       </div>
       <div class="cards">
-        <article class="panel"><h3>TLS Certificates (P-256)</h3><p>Every HTTPS certificate chain verifies ECDSA signatures.</p></article>
-        <article class="panel"><h3>Bitcoin (secp256k1)</h3><p>Every spend authorization is an ECDSA signature over transaction data.</p></article>
+        <article class="panel"><h3>TLS Certificates (P-256)</h3><p>Many HTTPS certificate chains verify ECDSA signatures; many others are RSA end to end. TLS 1.3 requires support for both.</p></article>
+        <article class="panel"><h3>Bitcoin (secp256k1)</h3><p>Legacy and SegWit v0 spends are authorized by ECDSA signatures over transaction data; Taproot (P2TR) spends use Schnorr (BIP-340) on the same curve.</p></article>
         <article class="panel"><h3>Ethereum (secp256k1)</h3><p>Each transaction and contract operation is backed by signer authenticity.</p></article>
         <article class="panel"><h3>SSH and Secure Boot</h3><p>Enterprise access and firmware integrity checks rely on signature verification.</p></article>
         <article class="panel"><h3>JWT ES256</h3><p>OIDC and OAuth token verification commonly uses P-256 ECDSA.</p></article>

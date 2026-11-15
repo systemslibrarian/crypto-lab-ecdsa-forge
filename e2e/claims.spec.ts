@@ -19,6 +19,9 @@ import { p256 } from '@noble/curves/nist.js';
  *     as recovered d == victim d, d·G == the published public key, and both
  *     captured signatures verifying under that key.
  *   - Exhibit 4: RFC 6979 is reproducible, and the same attack fails against it.
+ *   - Exhibit 5: the deployment cards do not over-claim ECDSA's reach — HTTPS
+ *     chains are also RSA (RFC 9846 § 9.1 makes both mandatory to support) and
+ *     Taproot spends are authorized by Schnorr, not ECDSA (BIP-340/341).
  */
 
 // --- arithmetic, independent of src/ ---------------------------------------
@@ -641,4 +644,27 @@ test('Exhibit 4: the nonce-reuse attack fails against RFC 6979 and says why', as
   await expect(status).toContainText('Recovery refused in this run');
   await expect(status).toContainText(`n=${shortHex(orderOf('p256'), 14)}`);
   await expect(status).toHaveClass(/ok/);
+});
+
+// ---------------------------------------------------------------------------
+// Exhibit 5 — In the Wild
+// ---------------------------------------------------------------------------
+
+test('Exhibit 5: the deployment cards scope ECDSA instead of claiming every chain and every spend', async ({
+  page,
+}) => {
+  await page.goto('./');
+  const tls = page.locator('#exhibit-wild .panel', { hasText: 'TLS Certificates' });
+  const bitcoin = page.locator('#exhibit-wild .panel', { hasText: 'Bitcoin (secp256k1)' });
+
+  // RFC 9846 (TLS 1.3) § 9.1 makes rsa_pkcs1_sha256 (for certificates) and
+  // ecdsa_secp256r1_sha256 both mandatory to support, so "every HTTPS
+  // certificate chain verifies ECDSA signatures" is false.
+  await expect(tls).toContainText('many others are RSA end to end');
+  await expect(tls).not.toContainText('Every HTTPS certificate chain');
+
+  // BIP-341: a Taproot spend is authorized by a 64-byte BIP-340 Schnorr
+  // signature, so not every Bitcoin spend authorization is ECDSA.
+  await expect(bitcoin).toContainText('Schnorr (BIP-340)');
+  await expect(bitcoin).not.toContainText('Every spend authorization');
 });

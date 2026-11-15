@@ -28,7 +28,7 @@ The demo visualizes ECDSA on both a hand-checkable toy curve and real 256-bit ke
 
 ## Real-World Usage
 
-ECDSA is standardized in NIST FIPS 186-5 and SEC 2. It underpins TLS 1.2/1.3 certificates, Bitcoin, Ethereum, SSH ECDSA keys, secure boot chains, JWT ES256 tokens, and WebAuthn/passkeys. Global verification volume is massive (roughly 10^9+ checks daily). RFC 6979 (Pornin, 2013) deterministic nonces are now standard in mature ECDSA deployments to avoid relying on fresh per-signature randomness; they do not eliminate implementation bugs, faults, or side channels.
+ECDSA is standardized in NIST FIPS 186-5 and SEC 1 (§ 4.1); SEC 2 supplies the curve parameters, not the signature scheme. It underpins TLS 1.2/1.3 certificates, Bitcoin, Ethereum, SSH ECDSA keys, secure boot chains, JWT ES256 tokens, and WebAuthn/passkeys. Global verification volume is massive (roughly 10^9+ checks daily). RFC 6979 (Pornin, 2013) deterministic nonces are now standard in mature ECDSA deployments to avoid relying on fresh per-signature randomness; they do not eliminate implementation bugs, faults, or side channels.
 
 ## How to Run Locally
 
