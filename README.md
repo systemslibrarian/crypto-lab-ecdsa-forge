@@ -2,7 +2,7 @@
 
 ## What It Is
 
-Browser-based ECDSA (Elliptic Curve Digital Signature Algorithm) demo with full protocol implementation on secp256k1 (Bitcoin, Ethereum) and P-256 (NIST, TLS). Uses @noble/curves for audited field arithmetic; all ECDSA protocol logic is implemented from scratch in this repository. Demonstrates the critical nonce reuse vulnerability that compromised the Sony PS3, Android Bitcoin wallets, and numerous other systems by performing real private key recovery from two signatures sharing a nonce. Shows RFC 6979 deterministic nonces as mitigation, verified against RFC 6979 Appendix A.2.5.
+Browser-based ECDSA (Elliptic Curve Digital Signature Algorithm) demo with full protocol implementation on secp256k1 (Bitcoin, Ethereum) and P-256 (NIST, TLS). Uses @noble/curves for the field arithmetic — pinned `^2.4.0`, while the library's latest independent audit is "at version 2.3.0, in Aug 2026, by [Trail of Bits]", so the shipped version is one release past it; all ECDSA protocol logic is implemented from scratch in this repository. Demonstrates the critical nonce reuse vulnerability that compromised the Sony PS3, Android Bitcoin wallets, and numerous other systems by performing real private key recovery from two signatures sharing a nonce. Shows RFC 6979 deterministic nonces as mitigation, verified against RFC 6979 Appendix A.2.5.
 
 ## When to Use It
 
