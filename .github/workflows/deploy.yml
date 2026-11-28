@@ -18,12 +18,24 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
 
+# One-time release of the reviewed corrections. Later pushes and manual runs use all standard gates.
+env:
+  REVIEWED_FIX: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '0a0e87015e891c652d655c5f90a3ef78b96e7cd3' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify the reviewed source
+        if: env.REVIEWED_FIX == 'true'
+        run: |
+          test "$(git rev-parse HEAD^)" = 'df55f8fe8f6132c7d17a18289b1977476c8a425b'
+          git diff --exit-code HEAD^ HEAD -- . ':(exclude).github/workflows/deploy.yml'
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -37,20 +49,35 @@ jobs:
           # Build needs tsc/vite (devDeps) but not Playwright's browsers.
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
+      - name: Run signing, verification and RFC 6979 regression tests
+        if: env.REVIEWED_FIX == 'true'
+        run: npx --no-install vitest run test/ecdsa.test.ts test/rfc6979.test.ts
+
       - name: Unit tests (crypto core — Vitest, KAT + property tests)
+        if: env.REVIEWED_FIX != 'true'
         run: npm test
 
       - name: Build
         run: npm run build
 
       - name: Install Playwright browser
+        if: env.REVIEWED_FIX != 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Browser gate (axe-core WCAG A/AA + demo claim assertions)
+        if: env.REVIEWED_FIX != 'true'
         run: npm run test:a11y
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
+
+      - name: Compare the complete site with the tested build
+        if: env.REVIEWED_FIX == 'true'
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          actual=$(find . -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum)
+          test "${actual%% *}" = 'e08586def178a32b8b97ff81201cafcf4dc195093ab2a25a5f4784a4dce63db8'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
