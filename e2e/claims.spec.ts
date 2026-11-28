@@ -231,6 +231,8 @@ test('Exhibit 1: a signature verifies, a tampered message does not', async ({ pa
 
   // Tamper the signed message: the same signature must now be rejected.
   await page.fill('#msg-sign', 'Authenticated by Mallory');
+  await expect(status).toHaveText('Message changed. Reverify the displayed signature or sign the new message.');
+  await expect(status).toHaveClass(/warn/);
   await page.click('#btn-verify');
   await expect(status).toHaveText('✗ INVALID signature');
   await expect(status).toHaveClass(/bad/);

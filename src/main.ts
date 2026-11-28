@@ -33,6 +33,8 @@ if (!app) throw new Error('App root not found');
 let activeCurve: CurveName = 'secp256k1';
 let exhibit1KeyPair: ECDSAKeyPair | null = null;
 let exhibit1LastSignature: ECDSASignature | null = null;
+// Edits and newer actions supersede async results already in flight.
+let signingPanelVersion = 0;
 let compareKeyPair: ECDSAKeyPair | null = null;
 
 const shortHex = (value: bigint | Uint8Array, size = 12): string => {
@@ -591,7 +593,17 @@ const ensureCompareKey = (): ECDSAKeyPair => {
   return compareKeyPair;
 };
 
+signMessageInput.addEventListener('input', () => {
+  signingPanelVersion++;
+  if (exhibit1KeyPair) {
+    setStatus(verifyStatus, exhibit1LastSignature
+      ? 'Message changed. Reverify the displayed signature or sign the new message.'
+      : 'Sign the current message to create a signature.', 'warn');
+  }
+});
+
 curveSelect.addEventListener('change', () => {
+  signingPanelVersion++;
   activeCurve = curveSelect.value as CurveName;
   exhibit1KeyPair = null;
   exhibit1LastSignature = null;
@@ -603,6 +615,8 @@ curveSelect.addEventListener('change', () => {
 });
 
 getById<HTMLButtonElement>('btn-generate').addEventListener('click', () => {
+  signingPanelVersion++;
+  sigView.textContent = 'none';
   exhibit1KeyPair = generateKeyPair(activeCurve);
   exhibit1LastSignature = null;
   publicKeyView.textContent = `${shortHex(exhibit1KeyPair.publicKey)} (${exhibit1KeyPair.publicKey.length} bytes)`;
@@ -616,7 +630,10 @@ getById<HTMLButtonElement>('btn-sign-random').addEventListener('click', async ()
     return;
   }
   const message = textToBytes(signMessageInput.value);
-  exhibit1LastSignature = await signRandom(message, exhibit1KeyPair);
+  const version = ++signingPanelVersion;
+  const signature = await signRandom(message, exhibit1KeyPair);
+  if (version !== signingPanelVersion) return;
+  exhibit1LastSignature = signature;
   sigView.textContent = `(${shortHex(exhibit1LastSignature.r)}, ${shortHex(exhibit1LastSignature.s)})`;
   setStatus(verifyStatus, 'Signature generated with random nonce.', 'warn');
 });
@@ -627,7 +644,10 @@ getById<HTMLButtonElement>('btn-sign-det').addEventListener('click', async () =>
     return;
   }
   const message = textToBytes(signMessageInput.value);
-  exhibit1LastSignature = await signDeterministic(message, exhibit1KeyPair);
+  const version = ++signingPanelVersion;
+  const signature = await signDeterministic(message, exhibit1KeyPair);
+  if (version !== signingPanelVersion) return;
+  exhibit1LastSignature = signature;
   sigView.textContent = `(${shortHex(exhibit1LastSignature.r)}, ${shortHex(exhibit1LastSignature.s)})`;
   setStatus(verifyStatus, 'Signature generated with RFC 6979 deterministic nonce.', 'ok');
 });
@@ -638,7 +658,9 @@ getById<HTMLButtonElement>('btn-verify').addEventListener('click', async () => {
     return;
   }
   const message = textToBytes(signMessageInput.value);
+  const version = ++signingPanelVersion;
   const valid = await verify(message, exhibit1LastSignature, exhibit1KeyPair.publicKey, exhibit1KeyPair.curve);
+  if (version !== signingPanelVersion) return;
   setStatus(verifyStatus, valid ? '✓ VALID signature' : '✗ INVALID signature', valid ? 'ok' : 'bad');
 });
 
